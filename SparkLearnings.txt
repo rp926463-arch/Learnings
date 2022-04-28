@@ -1,0 +1,79 @@
+
+**This will create new dataFrame for schema of existing dataframe
+
+df_schema = spark.createDataFrame([(i.name, str(i.dataType)) for i in df.schema.fields], ['column_name', 'datatype'])
+df_schema.show()
+UseCase:
+
+Useful when you want create table with Schema of the dataframe & you cannot use below code as pySpark user may not be authorized to execute DDL commands on database.
+
+df.createOrReplaceTempView("tmp_output_table")
+spark.sql("""drop table if exists schema.output_table""")   
+spark.sql("""create table schema.output_table as select * from tmp_output_table""")
+
+___________________________________________________________________________________________________________________________________
+
+**Cumulative sum
+
+import pyspark.sql.functions as F
+from pyspark.sql.window import Window
+
+col = ["rt_num_loan", "credit_score", "business_date", "rst_schld_bus_date"]
+
+data = [('0000000001', '500','2025-01-01', '2021-01-01'),('0000000001', '600','2020-04-13','2025-01-01'),('0000000001', '700','2022-01-31', '2027-01-01'),('0000000002', '700','2019-07-15', '2022-01-01'),('0000000002', '750','2020-06-16', '2025-01-01'),('0000000002', '800','2021-03-19', '2027-01-01'),('0000000003', '900','2021-05-31', '2025-01-01')]
+
+preirr_df = spark.createDataFrame(data=data, schema=col)
+
+df_sum = df.withColumn('pymt_diff_sum', F.sum('credit_score').over(Window.partitionBy('num_loan').orderBy(F.asc('business_date')).rangeBetween(Window.unboundedPreceding, 0)))
+
+df_sum.withColumn('struct', F.struct(df_sum.business_date, df_sum.pymt_diff_sum)).show()
+___________________________________________________________________________________________________________________________________
+
+**collect_list
+
+df_clst = df_sum.groupBy('num_loan').agg(F.collect_list(F.struct(df_sum.business_date, df_sum.pymt_diff_sum)).alias('cumulative_sum'))
+
+df_clst.select('cumulative_sum.pymt_diff_sum').show(truncate=False)
+___________________________________________________________________________________________________________________________________
+
+**join
+
+col = ['num_loan', 'test_col','next_rst_dt3', 'next_rst_dt5']
+data = [('0000000001', 'v1', '2027-01-01', '2027-01-01'), ('0000000002', 'v2', '2025-01-01', '2027-01-01'), ('0000000002', 'v3', '2025-01-01', '2027-01-01'), ('0000000002', 'v4', '2025-01-01', '2027-01-01')]
+
+main_df = spark.createDataFrame(data,col)
+
+main_df.filter(main_df.next_rst_dt5 == main_df.next_rst_dt3).show()
+
+df_clst.join(new_df, 'num_loan', 'left').show(truncate=False)
+
+df_clst.join(new_df, df_clst.num_loan==new_df.num_loan, 'left').show(truncate=False)
+___________________________________________________________________________________________________________________________________
+
+
+preirr_df_dt3 = preirr_df.select([F.col(c).alias("dt3_"+c) for c in preirr_df.columns])
+preirr_df_dt5 = preirr_df.select([F.col(c).alias("dt5_"+c) for c in preirr_df.columns]) 
+
+main_df.join(preirr_df_dt3, (main_df.num_loan == preirr_df_dt3.dt3_rt_num_loan) & (main_df.next_rst_dt3 == preirr_df_dt3.dt3_rst_schld_bus_date), "left") \
+.join(preirr_df_dt5, (main_df.num_loan == preirr_df_dt5.dt5_rt_num_loan) & (main_df.next_rst_dt3 == preirr_df_dt5.dt5_rst_schld_bus_date), "left").show()
+
+
+df1 = main_df.join(preirr_df, (main_df.num_loan == preirr_df.rt_num_loan) & (main_df.next_rst_dt3 == preirr_df.rst_schld_bus_date), "left")
+df1.show()
+df1 = df1.drop("rt_num_loan", "rst_schld_bus_date")
+df1.show()
+df2 = df1.join(preirr_df, (main_df.num_loan == preirr_df.rt_num_loan) & (main_df.next_rst_dt3 == preirr_df.rst_schld_bus_date), "left")
+df2.show()
+
+df1.join
+
+.join(preirr_df.alias("preirr_df_dt5"), (main_df.num_loan == preirr_df_dt5.rt_num_loan) & (main_df.next_rst_dt5 == preirr_df_dt5.rst_schld_bus_date)) \
+.show()
+
+
+main_df.filter(main_df.next_rst_dt3 == main_df.next_rst_dt5).show()
+
+preirr_df.filter(col("business_date") == col("rst_schld_bus_date")).show()
+
+
+
