@@ -1,3 +1,18 @@
+**Get DataFrame partitions
+df.rdd.getNumPartitions()
+_________________________________________________________________________________________________________________________________
+
+**Actions returns ___ non-RDD output
+**Transformations returns ___ RDD/DataFrame
+___________________________________________________________________________________________________________________________________
+
+**
+df = spark.select.sql("select * from ...")
+df.persist()
+df.count() --> Action[here DAG is getting break but we are using DF which is used before this action, so we need to persist it]
+
+df1 = df.select("..").withColumn("xyz", udf(..))
+___________________________________________________________________________________________________________________________________
 
 **This will create new dataFrame for schema of existing dataframe
 
@@ -18,11 +33,11 @@ ________________________________________________________________________________
 import pyspark.sql.functions as F
 from pyspark.sql.window import Window
 
-col = ["rt_num_loan", "credit_score", "business_date", "rst_schld_bus_date"]
+col = ["num_loan", "credit_score", "business_date", "rst_schld_bus_date"]
 
 data = [('0000000001', '500','2025-01-01', '2021-01-01'),('0000000001', '600','2020-04-13','2025-01-01'),('0000000001', '700','2022-01-31', '2027-01-01'),('0000000002', '700','2019-07-15', '2022-01-01'),('0000000002', '750','2020-06-16', '2025-01-01'),('0000000002', '800','2021-03-19', '2027-01-01'),('0000000003', '900','2021-05-31', '2025-01-01')]
 
-preirr_df = spark.createDataFrame(data=data, schema=col)
+df = spark.createDataFrame(data=data, schema=col)
 
 df_sum = df.withColumn('pymt_diff_sum', F.sum('credit_score').over(Window.partitionBy('num_loan').orderBy(F.asc('business_date')).rangeBetween(Window.unboundedPreceding, 0)))
 
