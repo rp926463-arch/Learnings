@@ -1,0 +1,40 @@
+I've your resume i've seen it, i wanted to start with knowing about your project & what are the tech your are using
+_____________________________________________
+
+How can i improve query perfomance, when i'm querying hive table
+
+Suppose there is a scenario, in which there isno column which has low cardinality for which we could do partitining, table is very huge i still want to improve performance of my job
+low cardinality --> Partitioning
+high cardinality --> Bucketing
+
+https://jaceklaskowski.gitbooks.io/mastering-spark-sql/content/spark-sql-bucketing.html
+_____________________________________________
+
+If you have a table with a billion rows, how would you add a new column to a table without any downtime.
+--ALTER TABLE command basically read locks the entire table and then write locks it for a brief time- in the end. If there are millions of records which means a simple ADD COLUMNwould take 20–30 minutes and will cause production downtime.
+
+sol:
+CREATE TABLE main_table_new LIKE main_table;
+ALTER TABLE main_table_new ADD COLUMN location VARCHAR(256);
+INSERT INTO main_table_new SELECT *, NULL FROM main_table;
+RENAME TABLE main_table TO main_table_old, main_table_new TO main_table;
+DROP TABLE main_table_old;
+_____________________________________________
+
+Hive table creation with a default value
+
+Sol:
+Hive currently doesn't support the feature of adding default value to any column while creating table. As a workaround temporarily load data into temporary table and use the insert overwrite table statement to add the current date and time into the main table.
+
+Create a temporary table
+create table test (sno number);
+Load data into the table
+Create final table
+create table final_table (sno number, createDate string);
+FInally load the data from Temp table to Final table.
+insert overwrite table final_table select sno, FROM_UNIXTIME( UNIX_TIMESTAMP(), 'dd/MM/YYYY' ) from test;
+_____________________________________________
+
+When you asked to optimize the job what are the steps you take A,B,C
+
+https://www.davidmcginnis.net/post/spark-job-optimization-myth-1-increasing-the-memory-per-executor-always-improves-performance
