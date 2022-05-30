@@ -1,0 +1,5 @@
+https://docs.snowflake.com/en/user-guide/data-load-transform.html#reorder-csv-columns-during-a-load
+
+Adobe feed registration
+
+https://experienceleague.adobe.com/docs/target/using/recommendations/entities/feeds.html?lang=en

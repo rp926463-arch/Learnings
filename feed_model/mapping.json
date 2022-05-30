@@ -1,0 +1,25 @@
+{
+	"FeedSourceName": "TestSource",
+	"mappings": [
+		{
+			"source": {
+				"name": "circuitId",
+				"type": "String",
+			},
+			"target": {
+				"name": "name",
+				"type": "String",
+			}
+		},
+		{
+			"source": {
+				"name": "location",
+				"type": "String",
+			},
+			"target": {
+				"name": "country",
+				"type": "String",
+			}
+		}
+	]
+}
