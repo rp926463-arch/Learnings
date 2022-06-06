@@ -1,25 +1,24 @@
 {
-	"FeedSourceName": "TestSource",
-	"mappings": [
+	"mappings" : [
 		{
-			"source": {
-				"name": "circuitId",
-				"type": "String",
-			},
-			"target": {
-				"name": "name",
-				"type": "String",
-			}
+		  "source" : {
+			"name" : "SSN",
+			"type" : "String"
+		  },
+		  "target" : {
+			"name" : "Adhar",
+			"type" : "String"
+		  }
 		},
 		{
-			"source": {
-				"name": "location",
-				"type": "String",
-			},
-			"target": {
-				"name": "country",
-				"type": "String",
-			}
+		  "source" : {
+			"name" : "American",
+			"type" : "String"
+		  },
+		  "target" : {
+			"name" : "Indian",
+			"type" : "String"
+		  }
 		}
-	]
+  ]
 }

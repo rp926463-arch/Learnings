@@ -1,0 +1,28 @@
+{
+  "FeedSource":"TEST",
+  "TargetSource":"TEST",
+  "SourceEON":"1234",
+  "TargetEON":"5678",
+  "mappings":[
+    {
+      "source":{
+        "name":"language",
+        "type":"String"
+      },
+      "target":{
+        "name":"new_language",
+        "type":"String"
+      }
+    },
+    {
+      "source":{
+        "name":"users_count",
+        "type":"String"
+      },
+      "target":{
+        "name":"new_users_count",
+        "type":"String"
+      }
+    }
+  ]
+}	
