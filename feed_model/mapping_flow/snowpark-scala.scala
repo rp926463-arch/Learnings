@@ -11,11 +11,11 @@ import java.io._
 
 class BankingDataSF {
   
-  def write_to_stagging_table(): Unit = {
-    var df2 = spark.read.options(Map("inferSchema"->"true","header"->"true")).csv("/FileStore/tables/california_housing_train.csv")
+  def write_to_stagging_table(data_file: String): Unit = {
+    var df2 = spark.read.options(Map("inferSchema"->"true","header"->"true")).csv(data_file)
     df2.write
         .format("snowflake")
-        .options(get_conn_details("sf"))
+        .options(get_conn_details("sf", "STAGING"))
         .option("dbtable", "EMPLOYEE")
         .mode(SaveMode.Overwrite)
         .save()
@@ -76,9 +76,10 @@ class BankingDataSF {
   }
 
   def run(): Unit = {
-    write_to_stagging_table()
-    var mapping_file_path = "/dbfs/FileStore/tables/mapping.json"
-    map_source_tble_to_target_tbl(mapping_file_path, "EMPLOYEE", "SHUFFLED_EMPLOYEE")
+    var data_file = "/FileStore/tables/california_housing_train.csv"
+    var mapping_file = "/dbfs/FileStore/tables/mapping.json"
+    write_to_stagging_table(data_file)
+    map_source_tble_to_target_tbl(mapping_file, "EMPLOYEE", "SHUFFLED_EMPLOYEE")
     session.close()
   }
 }
@@ -92,3 +93,7 @@ object Driver extends App{
 // COMMAND ----------
 
 Driver.main
+
+// COMMAND ----------
+
+

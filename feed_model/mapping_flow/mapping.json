@@ -25,7 +25,6 @@
 			"type" : "FLOAT"
 		  },
 		  "target" : {
-			"name" : "HOUSING_MEDIAN_AGE",
 			"type" : "VARCHAR"
 		  }
 		}
