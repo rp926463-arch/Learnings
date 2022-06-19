@@ -24,8 +24,8 @@ class BankingDataSF {
   def get_conn_details(pref: String, schema: String = "PUBLIC"): Map[String, String] = {
     var sfOptions = Map(
       pref+"url" -> "xj21352.central-india.azure.snowflakecomputing.com",
-      pref+"user" -> "RP926463",
-      pref+"password" -> "Xmb#529Geq",
+      pref+"user" -> "",
+      pref+"password" -> "",
       pref+"role" -> "accountadmin",
       pref+"warehouse" -> "COMPUTE_WH",
       pref+"database" -> "TESTDB",
