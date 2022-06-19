@@ -2,22 +2,31 @@
 	"mappings" : [
 		{
 		  "source" : {
-			"name" : "SSN",
-			"type" : "String"
+			"name" : "LONGITUDE",
+			"type" : "FLOAT"
 		  },
 		  "target" : {
-			"name" : "Adhar",
-			"type" : "String"
+			"name" : "LONGITUDE_NEW",
+			"type" : "VARCHAR"
 		  }
 		},
 		{
 		  "source" : {
-			"name" : "American",
-			"type" : "String"
+			"name" : "LATITUDE",
+			"type" : "FLOAT"
 		  },
 		  "target" : {
-			"name" : "Indian",
-			"type" : "String"
+			"name" : "LATITUDE_NEW"
+		  }
+		},
+		{
+		  "source" : {
+			"name" : "HOUSING_MEDIAN_AGE",
+			"type" : "FLOAT"
+		  },
+		  "target" : {
+			"name" : "HOUSING_MEDIAN_AGE",
+			"type" : "VARCHAR"
 		  }
 		}
   ]
