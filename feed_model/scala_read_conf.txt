@@ -1,0 +1,1 @@
+https://blog.knoldus.com/quickknol-reading-configuration-files-in-scala/
