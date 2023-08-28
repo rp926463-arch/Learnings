@@ -1,1 +1,0 @@
-https://www.analyticsvidhya.com/blog/2021/07/demystifying-stages-in-snowflake/#:~:text=Stages%20in%20Snowflake%20are%20locations,these%20are%20called%20Internal%20stages.
