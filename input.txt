@@ -1,0 +1,3 @@
+CREATE TABLE Table1( id int, name string);
+
+CREATE VIEW View1 as select CONCAT(id, "$"), name from Table1;
