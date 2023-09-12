@@ -38,3 +38,8 @@ else
     # If an error occurred, roll back the transaction
     hive -e "ROLLBACK;"
 fi
+
+
+
+
+
