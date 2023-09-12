@@ -5,7 +5,7 @@ import re
 
 #pattern = r'C:\\Users\\rosha\\OneDrive\\Pictures\\new\\ELOC_LAL*.txt'
 #pattern = r'C:\\Users\\rosha\\OneDrive\\Pictures\\new\\ELOC_LOL*.txt'
-pattern = r'C:\\Users\\rosha\\OneDrive\\Pictures\\new\\ELOC_LTL*.txt'
+pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\FACILITY*.txt'
 
 # Use glob to find files matching the pattern
 files = glob.glob(pattern)
@@ -15,7 +15,9 @@ latest_file = None
 latest_timestamp = None
 
 # Define a regular expression pattern to match a numeric timestamp before '.dat'
-timestamp_pattern = r'(\d+)\.txt'
+timestamp_pattern = r'(\d+).*\.txt'
+
+#timestamp_pattern = r'(\d+.*\d+)\.txt'
 
 # Iterate through the matching files and find the one with the latest timestamp
 for file_path in files:
