@@ -3,7 +3,8 @@ import glob
 import os
 import re
 
-pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\2*.txt'
+#pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\20220101*.txt'
+pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\2022011*.txt'
 #pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\TLEND*.txt'
 #pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\FACILITY*.txt'
 #pattern = r'C:\\Users\\rosha\\Downloads\\GIT_Repos\\Learnings\\dataFiles\\ELOC_LAL*.txt'
@@ -25,9 +26,8 @@ for file_path in files:
 
     # Use regular expression to extract timestamps
     matches = re.findall(timestamp_pattern, file_name)
+    matches.sort(key=lambda x: x[0])
     print(matches)
-    #print(matches[-1][0])
-    #matches = matches[-1][0]
     
     timestamp_str = next(filter(None, matches[-1]), None)
 
