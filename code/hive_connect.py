@@ -38,10 +38,9 @@ conn.close()
 
 
 from pyhive import hive
-from thrift.transport import TSocket
 from thrift.transport import TTransport
+from thrift.transport.TSocket import TSocket
 from thrift_sasl import TSaslClientTransport
-from thrift_sasl import TSasl
 
 # Set the connection parameters
 hive_host = "your_hive_host"
@@ -49,16 +48,16 @@ hive_port = your_hive_port
 hive_principal = "your_hive_principal"  # Example: "hive/_HOST@REALM"
 hive_database = "your_hive_database"  # Replace with your database name
 
-# Create a connection to Hive
-transport = TSocket.TSocket(hive_host, hive_port)
+# Create a TTransport socket
+transport = TSocket(hive_host, hive_port)
 transport = TTransport.TBufferedTransport(transport)
 
-# Set up the SASL client
+# Create a SASL client
 sasl_client = TSaslClientTransport(
     transport,
-    mechanism='GSSAPI',  # Kerberos
+    mechanism="GSSAPI",
+    service="hive",
     host=hive_host,
-    service='hive',
     username=hive_principal,
 )
 
