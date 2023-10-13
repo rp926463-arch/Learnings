@@ -1,11 +1,10 @@
-Approach 1:
+Approach 1(Single Character delimiter with data enclosed in quotes):
 
-To write a Pandas DataFrame to a file with all data enclosed in double quotes, you can use the quoting parameter in the to_csv method. Setting quoting=csv.QUOTE_ALL will enclose all data in double quotes, which is a safe approach to avoid conflicts with any single-character delimiter.
+To write a Pandas DataFrame to a file with all data enclosed in double quotes, you can use the quoting parameter in theto_csv method. Setting quoting=csv.QUOTE_ALL will enclose all data in double quotes, which is a safe approach to avoid conflicts with any single-character delimiter.
 
 	import pandas as pd
 	import csv
 
-	# Sample DataFrame
 	data = {
 		'Name': ['John', 'Alice', 'Bob'],
 		'Age': [30, 25, 35],
