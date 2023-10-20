@@ -1,0 +1,48 @@
+What are the different types of Azure Storage services available and what are their primary use cases?
+	Blob storage
+	File storage
+	Queue storage
+	Table Storage
+	Disk storage
+	Archive storage
+	ADLS
+
+
+Can you explain the difference between Azure Blob Storage and Azure File Storage?
+	Azure File Storage provides fully managed file shares that can be accessed via the SMB protocol, making it ideal for storing files that need to be shared across multiple machines and applications.
+--> optimised for sharing files accross multiple machines
+--> blob is designed for scalability & cost-effectiveness.
+
+**How does Azure Storage ensure data durability and availability?
+	Redundancy: Azure Storage provides different redundancy options, such as locally redundant storage (LRS), zone-redundant storage (ZRS), geo-redundant storage (GRS), and geo-zone-redundant storage (GZRS). These options ensure that your data is replicated across multiple data centers, providing protection against hardware failures, natural disasters, and other disruptive events.
+
+	Automatic Failover: Azure Storage uses automatic failover to ensure high availability of your data. In the event of an outage in one data center, Azure Storage automatically fails over to a secondary data center, minimizing downtime and ensuring data availability.
+
+**Can you describe the Azure Storage authentication and authorization process?
+authentication using : Azure AD, shared key, SAS
+Authorizarion using : RBAC
+
+**What are the benefits of using Azure Storage for backup and disaster recovery?
+
+How does Azure Storage support data encryption and compliance with regulatory requirements?
+	Encryption at Rest: Azure Storage supports encryption at rest for data stored in blobs, files, queues, and tables. Data is encrypted using industry-standard AES-256 encryption, and keys are managed by Azure Key Vault or customer-managed keys.
+	Encryption in Transit: Azure Storage supports Secure Sockets Layer (SSL)/Transport Layer Security (TLS) encryption for data in transit between the client and Azure Storage service.
+	Compliance with Regulatory Standards: Azure Storage is designed to comply with various regulatory standards, such as HIPAA, GDPR, and ISO 27001.
+
+**Can you explain how Azure Storage can be integrated with other Azure services, such as Azure Data Factory or Azure Functions?
+
+**How does Azure Storage support high-performance computing and big data analytics workloads?
+
+**Can you discuss the various pricing models for Azure Storage and how to optimize costs?
+
+**Can you provide an example of a real-world use case where you have implemented Azure Storage, and what challenges did you face during the implementation?
+
+**How does Azure support hybrid cloud environments, and what are the key technologies and tools used for integrating on-premises and cloud resources?
+
+**What are the key trends and developments in the Azure ecosystem, and how can organizations stay up-to-date with the latest Azure technologies and tools?
+
+**What are the benefits of using Azure over other cloud platforms, and how do these benefits impact businesses?
+
+**What are the different pricing models offered by Azure, and how do you estimate the cost of running an application in Azure Cloud?
+
+**What are the key considerations when designing an application architecture for Azure Cloud, and how can you optimize performance and scalability?
