@@ -1,0 +1,106 @@
+
+Data Engineering teams are doing much more than just moving data from one place to another or writing transforms for the ETL pipeline. Data Engineering is more an ☂ term that covers data modelling, database administration, data warehouse design & implementation, ETL pipelines, data integration, database testing, CI/CD for data and other DataOps things.
+
+
+	As a Data Engineer, you will spend a substantial part of your time is spent on the rollout process, and once pipelines are deployed, much of the rest goes towards fixing leaks. As fixing leaks is your job, you are likely to start building better pipelines to have less work afterward.
+
+	Remember, in Data Engineering conditions that shouldn’t happen, will happen — and when they happen, it is your job to recover in the fastest way.
+
+	How do you do so? Here are our design principles for Data Engineering
+
+
+
+idempotent
+monoid
+decoupled
+dependency injection
+unit
+functional programming
+asynchronous vs parallel programming
+thread locking
+eventual consistency
+exactly-once semantics
+lambda vs kappa architecture
+push vs pull architecture
+write -audit -publish pattern
+
+
+Data Modeling flavours:
+1.	Normalized data modeling
+		This is for transactional database to minimize IO and makes it easy to add and delete data.
+2.	Dimensional data modeling
+		This is for analytical databases. This makes group by queries on large amount of data easier.
+3.	Data vault
+		Prioritizes raw data and changing requirements. Consider this when requirements are rapidly changing.
+4.	One Big table.
+		A bit of dimentional data modeling with complex data types like STRUCT and ARRAY to minimize number of JOINS. Use this when you want rapid analytics on high scale.
+
+
+	
+
+What prinnciples your data pipeline should follow:
+1.Idempotency
+	refers to ability to produce same final results, irrespective of how many times you run the pipeline.
+	
+	lets dive little deeper into this, pipeline could fail because of multiple reasons maybe your scheduler didn't work properly or there might be bug that causes your pipeline to stop abruptly
+	However, when things are fixed your pipeline start re-running, you want to ensure that during retry operations, your pipeline works as expected and picks up from where it stopped, while also making sure there are no duplicates introduced.
+	
+	Thats one thing idempotency helps with.
+	
+	Few ways to build idempotent pipeline :-
+	1.	If you are loding data into database, using MERGE instead of INSERT can do wonders, MERGE make sure only new records are inserted, while with INSERT you'll need to explicitly handle de-duplication.
+	
+	2.	if you're loading data ito lake, then having checks that track last inserted data was and inserting only new data after that could help maintain idempotency.
+	
+	Idempotency is super helpful because analysts, ML engineers get data without duplicates for their tasks.Plus everytime a pipeline fails, you dont need to manually intervene and re-run pipeline to capture lost data.
+	
+2.Data Quality:
+	Maintain data quality by implementing data validation and cleaning steps within the pipeline. Ensure that data conforms to expected standards and is free of errors.
+
+3.Fault Tolerance:
+	Design the pipeline to handle failures gracefully. Implement retries, error handling, and monitoring to ensure that the pipeline can recover from failures without data loss or corruption.
+
+4.Scalability:
+	Ensure that the pipeline can scale to handle increasing data volumes. Use technologies and architectures that can dynamically allocate resources as needed.
+	
+5.Monitoring and Logging:
+	Implement comprehensive monitoring and logging to track the performance of the pipeline, detect issues, and troubleshoot problems. Use metrics and logs to gain insights into pipeline behavior.
+	
+	You’ve done everything right — but inevitably systems will still fail, what do you do?
+
+	Setting up proper alerting and monitoring is key. On the one hand, you would want to be aware of things as they start misbehaving. On the other, you wouldn’t want to wake up to a minefield of red squares each morning, trying to figure out which issues to prioritize.
+	
+	In fact, setting up too many alerts can be even worse than setting up too few. If you generate too many errors, typically you end up with the exact opposite of what you want: The errors are ignored and nobody takes care of them.
+
+	Good alerting practices should thus generate fewer, higher-level alerts and treat those as production incidents. A dashboard should show mission-critical failures so that errors can be taken care of in order of priority.
+	
+	Once you have defined your process for managing alerts efficiently you can go more granular tackling non-critical failures.
+	
+6.Data Security:
+	Protect sensitive data by implementing security measures like encryption, access control, and data masking. Follow best practices for data security and compliance with relevant regulations.
+	
+7.Data Lineage:
+	Establish data lineage tracking to understand the flow of data from source to destination. This helps in auditing, debugging, and ensuring data provenance.
+	
+8.Data Retention and Archiving:
+	Define policies for data retention and archiving to manage storage costs and comply with data retention regulations.
+	
+9.Dependency Management:
+	Clearly define and manage dependencies between different components of the pipeline. Ensure that updates or changes to one component do not break the pipeline.
+
+10.Disaster Recovery and Backup:
+	Implement disaster recovery plans and backups to protect against data loss and system failures.
+
+11.Modularity and Reusability/Lego Block Assembly:
+	Design the pipeline in a modular fashion, with reusable components and configurations. This makes it easier to maintain and extend the pipeline as requirements evolve.
+	
+	Typically, in Software engineering, if you encounter a problem you would write a piece of code to fix it. Especially in Data Engineering, a smarter approach is to find existing building blocks to fix that problem instead.
+	The less code you write, the better of a Data Engineer you are.
+	Why? Because the more custom code you write, the more code your company will have to maintain, the more unit testing you’ll have to do, and the harder your code becomes to understand for colleagues.
+
+	Instead, look for pre-existing blocks provided by the different components of your data stack, your orchestrator, cloud provider, warehouse, etc, and assemble them to serve your project needs. Not only will it be cheaper and easier to maintain, but it will free up your time for the core aspects of your work.
+
+12.Documentation:
+	Create thorough documentation for the data pipeline, including data sources, data transformations, dependencies, and deployment instructions. Documentation aids in understanding and maintaining the pipeline.
+
+
