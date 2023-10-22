@@ -1,0 +1,14 @@
+what is data profiling
+what is data marts
+what is data modeling & logical data modeling
+what is data mesh
+differant design patterns
+What are ETL patterns
+Create data models and speak to the tradeoffs of different modeling approaches
+What is Monte-carlo, Collibra(Data Goverance), emmuta(data masking, PII)
+Data Governance
+Cassandra/MongoDB
+Airflow
+Kafka
+AKS
+what is salting keys in spark & how to handle skew data
