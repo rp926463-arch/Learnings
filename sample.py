@@ -132,3 +132,53 @@ if __name__ == "__main__":
     hive_processor = HiveDataProcessor(max_workers=5, batch_size=5)
     hive_processor.process_data_parallel()
     hive_processor.collect_and_execute_insert()
+
+
+
+
+import subprocess
+import time
+
+def insert_with_retry(batch_data):
+    max_retries = 3
+    retry_delay = 5  # seconds
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            result = subprocess.run(["your_command_here"], shell=True, check=True, text=True)
+            print("Insert successful!")
+            break  # Break out of the loop if the insert is successful
+        except subprocess.CalledProcessError as e:
+            print(f"Error during insert attempt {attempt}: {e}")
+            time.sleep(retry_delay * attempt)  # Increase delay for each retry
+    else:
+        print("Max retries reached. Insert failed.")
+
+# Replace "your_command_here" with your actual insert query
+
+
+
+
+import os
+import time
+
+def insert_with_retry(batch_data):
+    max_retries = 3
+    retry_delay = 5  # seconds
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            rtn_code = os.system("your_command_here")
+            if rtn_code == 0:
+                print("Insert successful!")
+                break  # Break out of the loop if the insert is successful
+            else:
+                print(f"Non-zero return code during insert attempt {attempt}: {rtn_code}")
+        except Exception as e:
+            print(f"Error during insert attempt {attempt}: {str(e)}")
+        
+        time.sleep(retry_delay * attempt)  # Increase delay for each retry
+    else:
+        print("Max retries reached. Insert failed.")
+
+# Replace "your_command_here" with your actual insert query
