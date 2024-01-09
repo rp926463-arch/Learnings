@@ -27,6 +27,14 @@ class HiveDataProcessor:
         self.executor.shutdown(wait=True)
 
     def collect_and_execute_insert(self):
+        """
+        Collect SELECT queries from the value_queue and execute a single insert statement.
+
+        Note:
+        - This method collects all SELECT queries from the value_queue and combines them into a single
+          insert statement using UNION ALL. The combined statement is then executed.
+        - If the value_queue is empty, a message is printed indicating that there are no values to insert.
+        """
         all_values = []
         while not self.value_queue.empty():
             all_values.append(self.value_queue.get())
@@ -87,6 +95,13 @@ class HiveDataProcessor:
         self.batch_size = batch_size
 
     def execute_single_insert(self, combined_select_queries):
+        """
+        Execute a single insert statement based on combined SELECT queries.
+
+        Parameters:
+        - combined_select_queries (str): A string containing SELECT queries combined using UNION ALL.
+        
+        """
         insert_statement = f"INSERT INTO TABLE dl_rbg_work.dif_status {combined_select_queries}"
         # Replace the following line with your Hive execution logic
         print(f"Executing single insert: {insert_statement}")
