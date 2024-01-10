@@ -246,3 +246,7 @@ if __name__ == '__main__':
     unittest.main()
 
 
+ mock_file = MagicMock(spec=open)
+        mock_file.__enter__.return_value.__iter__.return_value = iter(["Line 1", "Line 2", "Line 3"])
+        mock_open.return_value = mock_file
+
