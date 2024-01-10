@@ -182,3 +182,37 @@ def insert_with_retry(batch_data):
         print("Max retries reached. Insert failed.")
 
 # Replace "your_command_here" with your actual insert query
+
+
+
+import unittest
+from your_module import HiveDataProcessor  # Replace 'your_module' with the actual module name
+
+class TestHiveDataProcessor(unittest.TestCase):
+    def setUp(self):
+        # Create an instance of HiveDataProcessor for testing
+        self.hive_processor = HiveDataProcessor(max_workers=5, batch_size=5)
+
+    def test_collect_and_execute_insert_with_values(self):
+        # Add some values to the value_queue for testing
+        for i in range(3):
+            select_query = f"SELECT '{i}', MAX(dte), 'SUCCESS' FROM dl_rbg_rewf.source_table"
+            self.hive_processor.add_select_query_to_queue(select_query)
+
+        # Call the method to collect and execute insert with values
+        with self.assertLogs(level="INFO") as log:
+            self.hive_processor.collect_and_execute_insert()
+
+        # Assert that the log contains the expected message
+        self.assertIn("Executing single insert:", log.output[0])
+
+    def test_collect_and_execute_insert_with_no_values(self):
+        # Call the method to collect and execute insert with no values
+        with self.assertLogs(level="INFO") as log:
+            self.hive_processor.collect_and_execute_insert()
+
+        # Assert that the log contains the expected message
+        self.assertIn("No values to insert.", log.output[0])
+
+if __name__ == "__main__":
+    unittest.main()
