@@ -237,3 +237,59 @@ class TestHiveDataProcessor(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+    
+    
+   import unittest
+from unittest.mock import patch
+from your_module import YourClass  # Replace 'your_module' and 'YourClass' with your actual module and class names
+
+class TestYourClass(unittest.TestCase):
+
+    def setUp(self):
+        # You can create an instance of your class and set up any necessary resources for testing
+        self.your_instance = YourClass()
+
+    def tearDown(self):
+        # Clean up any resources created during testing
+        pass
+
+    @patch.object(YourClass, 'execute_single_insert')
+    def test_collect_and_execute_insert_with_values(self, mock_execute):
+        # Test the method when there are values in the queue
+        # For this test, you might want to mock the value_queue to simulate values being present
+        # and mock the execute_single_insert method to check if it's called with the expected argument
+
+        # Example mock using unittest.mock.patch
+        with patch.object(self.your_instance, 'value_queue') as mock_queue:
+            # Set up the mock queue to return a value
+            mock_queue.empty.side_effect = [False, True]  # Returns False on the first call, then True
+
+            # Set up the mock queue to return a value
+            mock_queue.get.return_value = "SELECT * FROM table1"
+
+            # Call the method to be tested
+            self.your_instance.collect_and_execute_insert()
+
+            # Assertions to check if the methods were called as expected
+            mock_queue.get.assert_called_once()  # Ensure get method is called
+            mock_execute.assert_called_once_with("SELECT * FROM table1")  # Ensure execute_single_insert is called with the expected argument
+
+    @patch.object(YourClass, 'execute_single_insert')
+    def test_collect_and_execute_insert_with_no_values(self, mock_execute):
+        # Test the method when there are no values in the queue
+        # In this case, you might want to assert that execute_single_insert is not called
+
+        with patch.object(self.your_instance, 'value_queue') as mock_queue:
+            # Set up the mock queue to return an empty queue
+            mock_queue.empty.return_value = True
+
+            # Call the method to be tested
+            self.your_instance.collect_and_execute_insert()
+
+            # Assertions to check if the methods were called as expected
+            mock_queue.get.assert_not_called()  # Ensure get method is not called
+            mock_execute.assert_not_called()  # Ensure execute_single_insert is not called
+
+if __name__ == '__main__':
+    unittest.main()
+
