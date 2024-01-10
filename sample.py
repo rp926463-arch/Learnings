@@ -185,111 +185,64 @@ def insert_with_retry(batch_data):
 
 
 
-
 import unittest
-from unittest.mock import patch, call
-from your_module import HiveDataProcessor  # Replace 'your_module' with the actual module name
+from unittest.mock import patch, Mock
+from your_module import insert_with_retry  # Replace 'your_module' with your actual module name
 
-class TestHiveDataProcessor(unittest.TestCase):
-    def setUp(self):
-        # Create an instance of HiveDataProcessor for testing
-        self.hive_processor = HiveDataProcessor(max_workers=5, batch_size=5)
+class TestInsertWithRetry(unittest.TestCase):
 
-    @patch('your_module.HiveDataProcessor.execute_single_insert')
-    @patch('queue.Queue.put')
-    @patch('queue.Queue.get')
-    def test_collect_and_execute_insert_with_values(self, mock_get, mock_put, mock_execute_single_insert):
-        # Set up the mock behavior for Queue.put and Queue.get
-        mock_get.side_effect = lambda: "SELECT query"  # Mock get to return a SELECT query
-        mock_put.side_effect = lambda x: None  # Mock put to do nothing
+    @patch('your_module.subprocess.run')
+    @patch('time.sleep')
+    def test_successful_insert(self, mock_sleep, mock_subprocess_run):
+        # Test the case where the insert is successful on the first attempt
 
-        # Call the method to collect and execute insert with values
-        self.hive_processor.collect_and_execute_insert()
+        # Set up the mock subprocess.run to return a successful result
+        mock_subprocess_run.return_value = Mock(returncode=0, stdout="Insert successful!")
 
-        # Assert that the execute_single_insert method was called with the expected argument
-        mock_execute_single_insert.assert_called_once_with("SELECT query")
+        # Call the method to be tested
+        insert_with_retry("batch_data")
 
-        # Assert that Queue.put was called once
-        mock_put.assert_called_once()
+        # Assertions to check if the methods were called as expected
+        mock_subprocess_run.assert_called_once_with(["your_command_here"], shell=True, check=True, text=True)
+        mock_sleep.assert_not_called()  # Ensure sleep is not called since the insert is successful
 
-        # Assert that Queue.get was called until the queue is empty
-        self.assertEqual(mock_get.call_count, 1)
+    @patch('your_module.subprocess.run')
+    @patch('time.sleep')
+    def test_failed_insert_with_retry(self, mock_sleep, mock_subprocess_run):
+        # Test the case where the insert fails multiple times before succeeding
 
-    @patch('your_module.HiveDataProcessor.execute_single_insert')
-    @patch('queue.Queue.put')
-    @patch('queue.Queue.get')
-    def test_collect_and_execute_insert_with_no_values(self, mock_get, mock_put, mock_execute_single_insert):
-        # Set up the mock behavior for Queue.put and Queue.get
-        mock_get.side_effect = lambda: None  # Mock get to return None (empty queue)
-        mock_put.side_effect = lambda x: None  # Mock put to do nothing
+        # Set up the mock subprocess.run to raise an exception on the first two calls, then succeed on the third call
+        mock_subprocess_run.side_effect = [
+            subprocess.CalledProcessError(returncode=1, cmd=["your_command_here"]),
+            subprocess.CalledProcessError(returncode=2, cmd=["your_command_here"]),
+            Mock(returncode=0, stdout="Insert successful!")
+        ]
 
-        # Call the method to collect and execute insert with no values
-        self.hive_processor.collect_and_execute_insert()
+        # Call the method to be tested
+        insert_with_retry("batch_data")
 
-        # Assert that the execute_single_insert method was not called
-        mock_execute_single_insert.assert_not_called()
+        # Assertions to check if the methods were called as expected
+        mock_subprocess_run.assert_called_with(["your_command_here"], shell=True, check=True, text=True)
+        self.assertEqual(mock_subprocess_run.call_count, 3)  # Ensure subprocess.run is called three times
+        self.assertEqual(mock_sleep.call_count, 2)  # Ensure sleep is called twice (for the second and third attempts)
 
-        # Assert that Queue.put was not called
-        mock_put.assert_not_called()
+    @patch('your_module.subprocess.run')
+    @patch('time.sleep')
+    def test_failed_insert_max_retries_reached(self, mock_sleep, mock_subprocess_run):
+        # Test the case where the insert fails on all attempts, and max retries are reached
 
-        # Assert that Queue.get was not called
-        mock_get.assert_not_called()
+        # Set up the mock subprocess.run to raise an exception on all calls
+        mock_subprocess_run.side_effect = subprocess.CalledProcessError(returncode=1, cmd=["your_command_here"])
 
-if __name__ == "__main__":
-    unittest.main()
-    
-    
-   import unittest
-from unittest.mock import patch
-from your_module import YourClass  # Replace 'your_module' and 'YourClass' with your actual module and class names
+        # Call the method to be tested
+        insert_with_retry("batch_data")
 
-class TestYourClass(unittest.TestCase):
-
-    def setUp(self):
-        # You can create an instance of your class and set up any necessary resources for testing
-        self.your_instance = YourClass()
-
-    def tearDown(self):
-        # Clean up any resources created during testing
-        pass
-
-    @patch.object(YourClass, 'execute_single_insert')
-    def test_collect_and_execute_insert_with_values(self, mock_execute):
-        # Test the method when there are values in the queue
-        # For this test, you might want to mock the value_queue to simulate values being present
-        # and mock the execute_single_insert method to check if it's called with the expected argument
-
-        # Example mock using unittest.mock.patch
-        with patch.object(self.your_instance, 'value_queue') as mock_queue:
-            # Set up the mock queue to return a value
-            mock_queue.empty.side_effect = [False, True]  # Returns False on the first call, then True
-
-            # Set up the mock queue to return a value
-            mock_queue.get.return_value = "SELECT * FROM table1"
-
-            # Call the method to be tested
-            self.your_instance.collect_and_execute_insert()
-
-            # Assertions to check if the methods were called as expected
-            mock_queue.get.assert_called_once()  # Ensure get method is called
-            mock_execute.assert_called_once_with("SELECT * FROM table1")  # Ensure execute_single_insert is called with the expected argument
-
-    @patch.object(YourClass, 'execute_single_insert')
-    def test_collect_and_execute_insert_with_no_values(self, mock_execute):
-        # Test the method when there are no values in the queue
-        # In this case, you might want to assert that execute_single_insert is not called
-
-        with patch.object(self.your_instance, 'value_queue') as mock_queue:
-            # Set up the mock queue to return an empty queue
-            mock_queue.empty.return_value = True
-
-            # Call the method to be tested
-            self.your_instance.collect_and_execute_insert()
-
-            # Assertions to check if the methods were called as expected
-            mock_queue.get.assert_not_called()  # Ensure get method is not called
-            mock_execute.assert_not_called()  # Ensure execute_single_insert is not called
+        # Assertions to check if the methods were called as expected
+        mock_subprocess_run.assert_called_with(["your_command_here"], shell=True, check=True, text=True)
+        self.assertEqual(mock_subprocess_run.call_count, 3)  # Ensure subprocess.run is called three times
+        self.assertEqual(mock_sleep.call_count, 2)  # Ensure sleep is called twice (for the second and third attempts)
 
 if __name__ == '__main__':
     unittest.main()
+
 
