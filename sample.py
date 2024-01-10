@@ -185,7 +185,9 @@ def insert_with_retry(batch_data):
 
 
 
+
 import unittest
+from unittest.mock import patch, call
 from your_module import HiveDataProcessor  # Replace 'your_module' with the actual module name
 
 class TestHiveDataProcessor(unittest.TestCase):
@@ -193,26 +195,45 @@ class TestHiveDataProcessor(unittest.TestCase):
         # Create an instance of HiveDataProcessor for testing
         self.hive_processor = HiveDataProcessor(max_workers=5, batch_size=5)
 
-    def test_collect_and_execute_insert_with_values(self):
-        # Add some values to the value_queue for testing
-        for i in range(3):
-            select_query = f"SELECT '{i}', MAX(dte), 'SUCCESS' FROM dl_rbg_rewf.source_table"
-            self.hive_processor.add_select_query_to_queue(select_query)
+    @patch('your_module.HiveDataProcessor.execute_single_insert')
+    @patch('queue.Queue.put')
+    @patch('queue.Queue.get')
+    def test_collect_and_execute_insert_with_values(self, mock_get, mock_put, mock_execute_single_insert):
+        # Set up the mock behavior for Queue.put and Queue.get
+        mock_get.side_effect = lambda: "SELECT query"  # Mock get to return a SELECT query
+        mock_put.side_effect = lambda x: None  # Mock put to do nothing
 
         # Call the method to collect and execute insert with values
-        with self.assertLogs(level="INFO") as log:
-            self.hive_processor.collect_and_execute_insert()
+        self.hive_processor.collect_and_execute_insert()
 
-        # Assert that the log contains the expected message
-        self.assertIn("Executing single insert:", log.output[0])
+        # Assert that the execute_single_insert method was called with the expected argument
+        mock_execute_single_insert.assert_called_once_with("SELECT query")
 
-    def test_collect_and_execute_insert_with_no_values(self):
+        # Assert that Queue.put was called once
+        mock_put.assert_called_once()
+
+        # Assert that Queue.get was called until the queue is empty
+        self.assertEqual(mock_get.call_count, 1)
+
+    @patch('your_module.HiveDataProcessor.execute_single_insert')
+    @patch('queue.Queue.put')
+    @patch('queue.Queue.get')
+    def test_collect_and_execute_insert_with_no_values(self, mock_get, mock_put, mock_execute_single_insert):
+        # Set up the mock behavior for Queue.put and Queue.get
+        mock_get.side_effect = lambda: None  # Mock get to return None (empty queue)
+        mock_put.side_effect = lambda x: None  # Mock put to do nothing
+
         # Call the method to collect and execute insert with no values
-        with self.assertLogs(level="INFO") as log:
-            self.hive_processor.collect_and_execute_insert()
+        self.hive_processor.collect_and_execute_insert()
 
-        # Assert that the log contains the expected message
-        self.assertIn("No values to insert.", log.output[0])
+        # Assert that the execute_single_insert method was not called
+        mock_execute_single_insert.assert_not_called()
+
+        # Assert that Queue.put was not called
+        mock_put.assert_not_called()
+
+        # Assert that Queue.get was not called
+        mock_get.assert_not_called()
 
 if __name__ == "__main__":
     unittest.main()
