@@ -249,4 +249,4 @@ if __name__ == '__main__':
  mock_file = MagicMock(spec=open)
         mock_file.__enter__.return_value.__iter__.return_value = iter(["Line 1", "Line 2", "Line 3"])
         mock_open.return_value = mock_file
-
+https://superfastpython.com/threadpoolexecutor-thread-safe/
