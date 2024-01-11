@@ -281,5 +281,10 @@ values_str = ",\n       ".join(values_str_template.format(*data_queue.get()) for
 # Construct the final insert statement
 insert_statement = insert_template.format(hive_table, columns_str, values_str)
 
+while not data_queue.empty():
+    entry = data_queue.get()
+    formatted_values.append(", ".join(["'{}'"] * len(entry)).format(*entry))
 
+# Join the formatted values into a single string
+values_str = ",\n       ".join(formatted_values)
 
