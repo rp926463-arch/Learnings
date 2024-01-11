@@ -259,4 +259,9 @@ output_lines = result.stdout.strip().split('\n')
         output_tuple = tuple(map(str.strip, output_lines[1].split(',')))
 
         return output_tuple
+        
+output_tuple = tuple(
+    (value.strip() if value.strip().lower() != 'null' else None)
+    for value in output_lines[1].split(',')
+)
 
