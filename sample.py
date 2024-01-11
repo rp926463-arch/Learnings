@@ -253,5 +253,10 @@ https://superfastpython.com/threadpoolexecutor-thread-safe/
 
 echo -e "Subject: Your Subject\nContent-Type: text/html\n\n<html><body style='color:red;'>This is red text</body></html>" | mailx -s "Your Subject" recipient@example.com
 
+output_lines = result.stdout.strip().split('\n')
+        
+        # Parsing the output into a tuple
+        output_tuple = tuple(map(str.strip, output_lines[1].split(',')))
 
+        return output_tuple
 
