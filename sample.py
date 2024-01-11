@@ -286,5 +286,24 @@ while not data_queue.empty():
     formatted_values.append(", ".join(["'{}'"] * len(entry)).format(*entry))
 
 # Join the formatted values into a single string
+values_str = ",\n       ".join(formatted_values
+
+
+
+
+
+values_str_template = "({})"
+formatted_values = []
+
+# Dynamically construct the VALUES part using a while loop
+while not data_queue.empty():
+    entry = data_queue.get()
+    formatted_values.append(values_str_template.format(", ".join(["'{}'"] * len(entry)).format(*entry)))
+
+# Join the formatted values into a single string
 values_str = ",\n       ".join(formatted_values)
+
+
+
+
 
