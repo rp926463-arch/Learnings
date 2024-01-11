@@ -250,3 +250,8 @@ if __name__ == '__main__':
         mock_file.__enter__.return_value.__iter__.return_value = iter(["Line 1", "Line 2", "Line 3"])
         mock_open.return_value = mock_file
 https://superfastpython.com/threadpoolexecutor-thread-safe/
+
+echo -e "Subject: Your Subject\nContent-Type: text/html\n\n<html><body style='color:red;'>This is red text</body></html>" | mailx -s "Your Subject" recipient@example.com
+
+
+
