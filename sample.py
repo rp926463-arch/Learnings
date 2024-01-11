@@ -265,3 +265,21 @@ output_tuple = tuple(
     for value in output_lines[1].split(',')
 )
 
+
+# Define the Hive table and columns
+hive_table = "dl_rbg_work.dif_status"
+columns = ["job_name", "date", "status"]
+
+# Create the SQL insert statement
+insert_template = "INSERT INTO {} ({}) VALUES {};"
+columns_str = ", ".join(columns)
+values_str_template = "('{}', '{}', '{}')"
+
+# Build the VALUES part of the query using the queue entries
+values_str = ",\n       ".join(values_str_template.format(*data_queue.get()) for _ in range(data_queue.qsize()))
+
+# Construct the final insert statement
+insert_statement = insert_template.format(hive_table, columns_str, values_str)
+
+
+
