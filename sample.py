@@ -340,7 +340,7 @@ result_tuple = run_hive_query(hive_query)
 print(result_tuple)
 
 
-it is capturing 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT\t2023-09-29\tADHOC_SUCCESS\n' 
+it is capturing 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADHOC_SUCCESS\n' 
 as
 <re.Match object; span(0, 58), match='HD2SF_GBT_TEXPRESS_CR_ACCOUNT\t2023-09-29\tADH>
 
@@ -350,8 +350,54 @@ as
 pattern = r"(.+?)\s+([\d-]+)\s+(.+?)(?:\s|\n|$)"
 
 
+still didnt work
 pattern = r"([^\s]+)\s+([\d-]+)\s+([^\s]+)(?:\s|\n|$)"
-text = 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT\t2023-09-29\tADHOC_SUCCESS\n'
+text = 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADHOC_SUCCESS\n'
+match = re.search(pattern, text)
+output : HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADHOC_SUCCESS
+
+<re.Match object; span=(0, 58), match='HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADH>
+
+Actual : <re.Match object; span=(0, 58), match='HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADH>
+required : <re.Match object; span=(0, 58), match='HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADHOC_SUCCESS>
+
+
+
+
+import re
+
+def parse_text(input_text):
+    pattern = r'\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*' if '|' in input_text else r'([^\t]+)\t([^\t]+)\t([^\t\n]+)'
+    #data_lines = [line for line in input_text.split('\n') if '|' in line][-1]
+    data_lines = [line for line in input_text.split('\n') if '|' in line]
+    if data_lines:
+        match = re.search(pattern, data_lines[-1])
+        if match:
+            return tuple(group.strip() for group in match.groups())
+    #match = re.search(pattern, data_lines)
+    #if match:
+    #    return match.groups()
+
+
+def parse_text(input_text):
+    pattern = r'\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*([^|]+)\s*\|\s*' if '|' in input_text else r'([^\t]+)\t([^\t]+)\t([^\t\n]+)'
+    data_lines = input_text
+    if '|' in input_text:
+        data_lines = [line for line in input_text.split('\n') if '|' in line][-1]
+    match = re.search(pattern, data_lines)
+    if match:
+        return tuple(group.strip() for group in match.groups())
+    
+
+# Example usage with text1
+text1 = 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL\t2023-09-29\tADHOC_SUCCESS\n'
+result1 = parse_text(text1)
+print("Result1:", result1)
+
+# Example usage with text2
+text2 = '+----------------\n|    _c0|    _c1|    _c2|\n+-------------------+\n|  HD2SF_GBT_TEXPRESS_CR_ACCOUNT_DL | 2023-09-29 | ADHOC_SUCCESS |\n'
+result2 = parse_text(text2)
+print("Result2:", result2)
 
 
 
