@@ -305,5 +305,42 @@ values_str = ",\n       ".join(formatted_values)
 
 
 
+_________________________________
+import subprocess
+import re
+
+def run_hive_query(query):
+    try:
+        result = subprocess.run(["hive", "-e", query], shell=True, check=True, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # Use a regular expression to extract values from the Hive query output
+        match = re.search(r"(\w+)\s+([\d-]+)\s+(\w+)", result.stdout)
+        
+        if match:
+            output_tuple = tuple(
+                (value.strip() if value.strip().lower() != 'null' else None)
+                for value in match.groups()
+            )
+            return output_tuple
+        else:
+            print("Error: Unable to parse Hive query output.")
+            return None
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing Hive query: {e}")
+        return None
+
+# Example query
+hive_query = "select 'JOB_YD', max(job_date), 'SUCCESS' from dl_rbg_work.dif_status"
+
+# Run the Hive query and get the output as a tuple
+result_tuple = run_hive_query(hive_query)
+
+# Print the result
+print(result_tuple)
+
+
+
+
 
 
