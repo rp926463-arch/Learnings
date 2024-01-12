@@ -1,3 +1,33 @@
+from queue import Queue
+
+class YourClass:
+    def __init__(self):
+        self.value_queue = Queue()
+        self.value_queue.put(('dummy_job1', 'NULL', 'SUCCESS'))
+        self.value_queue.put(('dummy_job2', '2023-10-01', 'SUCCESS'))
+
+    def process_queue(self):
+        formatted_values = []
+        values_str_template = "({})"
+        
+        while not self.value_queue.empty():
+            entry = self.value_queue.get()
+            formatted_entry = ", ".join(["NULL" if val == 'NULL' else f"'{val}'" for val in entry])
+            formatted_values.append(values_str_template.format(formatted_entry))
+
+        values_str = ",\n".join(formatted_values)
+        insert_template = f"INSERT INTO dl_rbg_work.dif_status VALUES {values_str};"
+
+        return insert_template
+
+# Example usage
+your_instance = YourClass()
+result = your_instance.process_queue()
+print(result)
+
+print("Expected output:", result)
+
+'''
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
@@ -402,5 +432,22 @@ print("Result2:", result2)
 result.returncode if hasattr(result, 'returncode') else None
 
 
+Modify below code to get expected_output
 
 
+self.value_queue = [('dummy_job1', 'NULL', 'SUCCESS'), ('dummy_job2', '2023-10-01', 'SUCCESS')]
+formatted_values=[]
+values_str_template="({})"
+while not self.value_queue.empty():
+    entry = self.value_queue.get()
+    formatted_values.append(values_str_template.format(", ".join(["{}"] * len(entry)).format(entry)))
+
+values_str = ", \n ".join(formatted_values)
+
+insert_template = f"INSERT INTO dl_rbg_work.dif_status VALUES {values_str);"
+
+print(insert_template)
+
+expected_output = "INSERT INTO dl_rbg_work.dif_status VALUES ('dummy_job1', NULL, 'SUCCESS'), ('dummy_job2', '2023-10-01', 'SUCCESS')"
+//
+'''
