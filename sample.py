@@ -399,7 +399,7 @@ text2 = '+----------------\n|    _c0|    _c1|    _c2|\n+-------------------+\n| 
 result2 = parse_text(text2)
 print("Result2:", result2)
 
-
+result.returncode if hasattr(result, 'returncode') else None
 
 
 
