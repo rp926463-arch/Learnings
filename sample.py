@@ -340,13 +340,18 @@ result_tuple = run_hive_query(hive_query)
 print(result_tuple)
 
 
-it is capturing JOB_YD\t2023-01-11\tADHOC_SUCCESS\n as JOB_YD\t2023-01-11\tADH
+it is capturing 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT\t2023-09-29\tADHOC_SUCCESS\n' 
+as
+<re.Match object; span(0, 58), match='HD2SF_GBT_TEXPRESS_CR_ACCOUNT\t2023-09-29\tADH>
 
 
 (.+?)\s+([\d-]+)\s+(.+)
 
 pattern = r"(.+?)\s+([\d-]+)\s+(.+?)(?:\s|\n|$)"
 
+
+pattern = r"([^\s]+)\s+([\d-]+)\s+([^\s]+)(?:\s|\n|$)"
+text = 'HD2SF_GBT_TEXPRESS_CR_ACCOUNT\t2023-09-29\tADHOC_SUCCESS\n'
 
 
 
