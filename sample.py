@@ -340,6 +340,10 @@ result_tuple = run_hive_query(hive_query)
 print(result_tuple)
 
 
+it is capturing JOB_YD\t2023-01-11\tADHOC_SUCCESS as JOB_YD\t2023-01-11\tADH
+
+
+(.+?)\s+([\d-]+)\s+(.+)
 
 
 
