@@ -27,6 +27,10 @@ print(result)
 
 print("Expected output:", result)
 
+#https://www.snowflake.com/blog/managing-snowflakes-compute-resources/
+
+#https://www.linkedin.com/pulse/snowflake-databricks-bigquery-dataproc-redshift-emr-lakshmanan
+
 '''
 import threading
 from concurrent.futures import ThreadPoolExecutor
