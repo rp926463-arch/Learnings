@@ -1,3 +1,60 @@
+def insert inte_control_tol(self, job id, status, source container, source table, max date, filtr):
+    if max date is None:
+        query = f"insert into dl rbg_work.dif_status select {job_id}, CURRENT DATE, {status}"
+    elif filtr and job_id in self.control_dt_map:
+        filtr = f"where {max_date} > {self.control dt_map[job_id]}"
+        query = f"insert into dl_rbg_work.dif_status select {job_id}, max({max_date}), {status} from {source_container}.{source_table} {filtr}"
+    else:
+        query = f"insert into dl_rbg_work.dif_status select '{joo_id}', max({max date}), '{status}' from {source container}.{source_table} {filtr}"
+        
+    self.logger.info(f"Control table insert query for JOB={job_id): (query)")
+    start time datetime.now()
+    rtn_cde os.system(fhive -e "(query)"")
+    end_time = datetime.now()
+    if not rtn_cde:
+        self.logger.info("Insertion to control table Successful for job {}".format(job_id))
+        self.logger.info(f'Insertion to control table for 308=job_id) took end_time start time}")
+    else:
+        self.logger.error("Insertion to control table Failed for job {}".format(job_id))
+
+from datetime import datetime
+import time
+
+def insert_into_control_table(self, job_id, status, source_container, source_table, max_date, filtr):
+    max_retries = 3
+    retry_delay_seconds = 5
+    
+    for attempt in range(max_retries):
+        if max_date is None:
+            query = f"insert into dl_rbg_work.dif_status select {job_id}, CURRENT DATE, {status}"
+        elif filtr and job_id in self.control_dt_map:
+            filtr = f"where {max_date} > {self.control_dt_map[job_id]}"
+            query = f"insert into dl_rbg_work.dif_status select {job_id}, max({max_date}), {status} from {source_container}.{source_table} {filtr}"
+        else:
+            query = f"insert into dl_rbg_work.dif_status select '{job_id}', max({max_date}), '{status}' from {source_container}.{source_table} {filtr}"
+        
+        self.logger.info(f"Control table insert query for JOB={job_id}: {query}")
+        start_time = datetime.now()
+        rtn_code = os.system(f"hive -e \"{query}\"")
+        end_time = datetime.now()
+        
+        if not rtn_code:
+            self.logger.info(f"Insertion to control table Successful for job {job_id}")
+            self.logger.info(f"Insertion to control table for job {job_id} took {end_time - start_time}")
+            break  # Exit the loop if insertion is successful
+        else:
+            self.logger.error(f"Insertion to control table Failed for job {job_id}")
+            self.logger.error(f"Attempt {attempt + 1}/{max_retries}")
+            
+            if attempt < max_retries - 1:
+                self.logger.info(f"Retrying in {retry_delay_seconds} seconds...")
+                time.sleep(retry_delay_seconds)
+
+    if rtn_code:
+        self.logger.error(f"Failed to insert into control table after {max_retries} attempts for job {job_id}")
+
+
+'''
 from queue import Queue
 
 class YourClass:
@@ -26,7 +83,7 @@ result = your_instance.process_queue()
 print(result)
 
 print("Expected output:", result)
-
+'''
 #https://www.snowflake.com/blog/managing-snowflakes-compute-resources/
 
 #https://www.linkedin.com/pulse/snowflake-databricks-bigquery-dataproc-redshift-emr-lakshmanan
