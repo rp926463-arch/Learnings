@@ -1,3 +1,67 @@
+from pyspark.sql import SparkSession
+
+def get_spark_connection(app_name):
+    # Your implementation to create and return a Spark session
+    spark = SparkSession.builder.appName(app_name).getOrCreate()
+    return spark
+
+def read_data_into_dataframe(spark, source_system, query, source_options):
+    # Your implementation to read data into a DataFrame based on source_system and query
+    df = spark.read.format(source_system).options(**source_options).option("query", query).load()
+    return df
+
+def write_data_to_target(df, target_system, target_table, target_options):
+    # Your implementation to write data from DataFrame to a database based on target_system and target_table
+    df.write.format(target_system).options(**target_options).option("dbtable", target_table).mode("overwrite").save()
+
+def process_json_config(json_config):
+    for product, queries in json_config.items():
+        print(f"Processing {product}...")
+
+        for query_info in queries:
+            app_name = query_info["app_name"]
+            source_system = query_info["source_system"]
+            query = query_info["query"]
+            target_system = query_info.get("target_system", source_system)  # Use source system as default target system
+
+            print(f"Executing query for {app_name}...")
+
+            # Create Spark session
+            spark = get_spark_connection(app_name)
+
+            # Read data into DataFrame
+            source_options = query_info.get("source_options", {})
+            df = read_data_into_dataframe(spark, source_system, query, source_options)
+
+            # Your logic to process the DataFrame as needed
+
+            # Write data to target
+            target_table = query_info.get("target_table", f"{product}_{app_name}")
+            target_options = query_info.get("target_options", {})
+            write_data_to_target(df, target_system, target_table, target_options)
+
+            # Stop Spark session
+            spark.stop()
+
+if __name__ == "__main__":
+    # Your JSON configuration
+    json_config = {
+        "Product1": [
+            {"app_name": "spark_job_id_dl1", "source_system": "parquet", "query": "select * from table1", "target_system": "parquet"},
+            {"app_name": "spark_job_id_dl2", "source_system": "parquet", "query": "select * from table1", "target_system": "csv"},
+        ],
+        "Product2": [
+            {"app_name": "spark_job_id2", "source_system": "csv", "query": "select * from table1", "target_system": "parquet"},
+        ],
+    }
+
+    # Process JSON configuration
+    process_json_config(json_config)
+
+
+
+
+
 def insert inte_control_tol(self, job id, status, source container, source table, max date, filtr):
     if max date is None:
         query = f"insert into dl rbg_work.dif_status select {job_id}, CURRENT DATE, {status}"
@@ -45,10 +109,9 @@ def insert_into_control_table(self, job_id, status, source_container, source_tab
         else:
             self.logger.error(f"Insertion to control table Failed for job {job_id}")
             self.logger.error(f"Attempt {attempt + 1}/{max_retries}")
-            
-            if attempt < max_retries - 1:
-                self.logger.info(f"Retrying in {retry_delay_seconds} seconds...")
-                time.sleep(retry_delay_seconds)
+            self.logger.info(f"Retrying in {retry_delay_seconds} seconds...")
+            time.sleep(retry_delay_seconds)
+                
 
     if rtn_code:
         self.logger.error(f"Failed to insert into control table after {max_retries} attempts for job {job_id}")
