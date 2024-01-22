@@ -1,6 +1,11 @@
 import pyodbc
 
+import pyodbc
+
 def update_teradata_table(connection_string, table_name, update_column, new_value, condition_column, condition_value):
+    connection = None
+    cursor = None
+
     try:
         # Establish a connection to the Teradata database
         connection = pyodbc.connect(connection_string)
@@ -15,15 +20,36 @@ def update_teradata_table(connection_string, table_name, update_column, new_valu
         # Commit the transaction
         connection.commit()
 
-        print("Update successful.")
+        # Check if the update was successful
+        if cursor.rowcount > 0:
+            print(f"Update successful. {cursor.rowcount} rows affected.")
+        else:
+            print("Update did not affect any rows.")
 
     except Exception as e:
         print(f"Error updating Teradata table: {e}")
 
     finally:
         # Close the cursor and connection
-        cursor.close()
-        connection.close()
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+# Example usage:
+# Specify your Teradata connection details
+teradata_connection_string = "DRIVER={Teradata};DBCNAME=your_host;UID=your_username;PWD=your_password"
+
+# Specify the table and update details
+table_name = "your_table"
+update_column = "column_to_update"
+new_value = "new_value"
+condition_column = "condition_column"
+condition_value = "condition_value"
+
+# Perform the update
+update_teradata_table(teradata_connection_string, table_name, update_column, new_value, condition_column, condition_value)
+
 
 # Example usage:
 # Specify your Teradata connection details
