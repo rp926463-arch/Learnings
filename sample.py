@@ -1,3 +1,55 @@
+import pyodbc
+
+def update_teradata_table(connection_string, table_name, update_column, new_value, condition_column, condition_value):
+    try:
+        # Establish a connection to the Teradata database
+        connection = pyodbc.connect(connection_string)
+
+        # Create a cursor
+        cursor = connection.cursor()
+
+        # Build and execute the UPDATE SQL statement
+        update_query = f"UPDATE {table_name} SET {update_column} = ? WHERE {condition_column} = ?"
+        cursor.execute(update_query, new_value, condition_value)
+
+        # Commit the transaction
+        connection.commit()
+
+        print("Update successful.")
+
+    except Exception as e:
+        print(f"Error updating Teradata table: {e}")
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+# Example usage:
+# Specify your Teradata connection details
+teradata_connection_string = "DRIVER={Teradata};DBCNAME=your_host;UID=your_username;PWD=your_password"
+
+# Specify the table and update details
+table_name = "your_table"
+update_column = "column_to_update"
+new_value = "new_value"
+condition_column = "condition_column"
+condition_value = "condition_value"
+
+# Perform the update
+update_teradata_table(teradata_connection_string, table_name, update_column, new_value, condition_column, condition_value)
+
+
+
+
+
+
+
+
+
+
+
+
 from pyspark.sql import SparkSession
 
 def get_spark_connection(app_name):
