@@ -1,3 +1,33 @@
+@patch('your_module.spark.read.format')
+@patch('your_module.spark.read.load')
+def test_spark_read_source_db(self, mock_logger, mock_format, mock_load):
+    # Set up the input parameters
+    spark = MagicMock()
+    source_format = 'parquet'
+    source_query = 'SELECT * FROM table'
+    source_options = {'option1': 'value1', 'option2': 'value2'}
+    datastore_type = 'source_db'
+    read_opt = 'dbTable'
+
+    # Mock the logger
+    mock_logger_instance = MagicMock()
+    mock_logger.return_value = mock_logger_instance
+
+    # Call the method under test
+    result = DbUtils.spark_read_source_db(
+        spark, source_format, source_query, source_options, datastore_type, read_opt
+    )
+
+    # Assertions
+    mock_logger_instance.info.assert_called_with(
+        f'Reading data from {datastore_type}, with options\n : {source_options}'
+    )
+
+    mock_format.assert_called_with(source_format)
+    mock_format.return_value.options.assert_called_with(**source_options)
+    mock_format.return_value.option.assert_called_with(read_opt, source_query)
+    mock_load.assert_called()
+
 import pyodbc
 
 import pyodbc
