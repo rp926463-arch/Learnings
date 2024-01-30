@@ -1,3 +1,83 @@
+import unittest
+from unittest.mock import patch, MagicMock
+from pyspark.sql import SparkSession
+from your_module import Generator  # Replace 'your_module' with your actual module name
+
+class TestGenerator(unittest.TestCase):
+
+    @patch('your_module.SparkSession.builder.getOrCreate')
+    def test_remove_line_pyS_head(self, mock_getOrCreate):
+        # Create a mock SparkContext
+        mock_spark_context = MagicMock()
+        mock_getOrCreate.return_value.sparkContext = mock_spark_context
+
+        # Create a mock SparkSession
+        mock_spark_session = MagicMock()
+        mock_spark_session.builder.getOrCreate.return_value = mock_spark_session
+
+        # Create a mock Generator instance
+        generator = Generator(mock_spark_session)
+
+        dataRDD = mock_spark_context.parallelize(["line1", "line2", "line3", "line4", "line5"])
+        section = "HEAD"
+        start_at = ""
+        num_of_lines = 2
+
+        resultRDD = generator.remove_line_pyS(dataRDD, section, start_at, num_of_lines).collect()
+
+        # Assert that the resultRDD contains the expected lines
+        self.assertEqual(resultRDD, ["line3", "line4", "line5"])
+
+    @patch('your_module.SparkSession.builder.getOrCreate')
+    def test_remove_line_pyS_tail(self, mock_getOrCreate):
+        # Create a mock SparkContext
+        mock_spark_context = MagicMock()
+        mock_getOrCreate.return_value.sparkContext = mock_spark_context
+
+        # Create a mock SparkSession
+        mock_spark_session = MagicMock()
+        mock_spark_session.builder.getOrCreate.return_value = mock_spark_session
+
+        # Create a mock Generator instance
+        generator = Generator(mock_spark_session)
+
+        dataRDD = mock_spark_context.parallelize(["line1", "line2", "line3", "line4", "line5"])
+        section = "TAIL"
+        start_at = ""
+        num_of_lines = 2
+
+        resultRDD = generator.remove_line_pyS(dataRDD, section, start_at, num_of_lines).collect()
+
+        # Assert that the resultRDD contains the expected lines
+        self.assertEqual(resultRDD, ["line1", "line2", "line3"])
+
+    def test_readTxtFile(self):
+        # Create a mock Generator instance
+        generator = Generator(spark=None)
+
+        filepath = "path/to/your/file.txt"
+        delimiter = ","
+        header_cnt = 2
+        footer_cnt = 1
+        header_str = ["col1", "col2", "col3"]
+
+        # Mock the necessary methods in readTxtFile
+        with patch.object(generator, 'remove_line_pyS') as mock_remove_line_pyS:
+            mock_remove_line_pyS.return_value = ["line1", "line2", "line3"]
+            result_df = generator.readTxtFile(filepath, delimiter, header_cnt, footer_cnt, header_str)
+
+        # Perform assertions on the result_df as needed
+        # For example, you can check the schema, count, etc.
+        self.assertEqual(result_df.count(), 3)
+        self.assertEqual(result_df.columns, ["col1", "col2", "col3"])
+
+if __name__ == '__main__':
+    unittest.main()
+
+
+
+
+
 @patch('your_module.spark.read.format')
 @patch('your_module.spark.read.load')
 def test_spark_read_source_db(self, mock_logger, mock_format, mock_load):
