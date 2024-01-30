@@ -1,3 +1,4 @@
+side_effect=lambda rdd, s, st, n: type('', (), {'collect': lambda self: []})(rdd.sparkContext, [])
 
 import unittest
 from unittest.mock import patch, MagicMock
