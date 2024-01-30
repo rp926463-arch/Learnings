@@ -1,4 +1,44 @@
-side_effect=lambda rdd, s, st, n: type('', (), {'collect': lambda self: []})(rdd.sparkContext, [])
+import unittest
+from unittest.mock import patch, MagicMock
+from your_module import YourClass  # Replace 'your_module' with your actual module name
+
+class TestYourClass(unittest.TestCase):
+    def setUp(self):
+        # Create an instance of YourClass
+        self.tc = YourClass()
+
+    @patch('your_module.SparkContext')  # Assuming SparkContext is used in remove_line_pyS
+    def test_remove_line_pyS(self, mock_spark_context):
+        # Mocking dataRDD and SparkContext
+        mock_data_rdd = MagicMock()
+        mock_spark_context.return_value.parallelize.return_value = mock_data_rdd
+
+        # Mock zipWithIndex method
+        with patch.object(mock_data_rdd, 'zipWithIndex') as mock_zip_with_index:
+            # Mock filter method
+            with patch.object(mock_zip_with_index.return_value, 'filter') as mock_filter:
+                # Mock map method
+                with patch.object(mock_filter.return_value, 'map') as mock_map:
+                    # Call the method you want to test
+                    result = self.tc.remove_line_pyS(mock_data_rdd, "HEAD", 2, 5)
+
+                    # Assert that the SparkContext.parallelize method was called
+                    mock_spark_context.return_value.parallelize.assert_called_once_with([], 1)
+
+                    # Assert that zipWithIndex was called on the dataRDD
+                    mock_zip_with_index.assert_called_once_with()
+
+                    # Assert that filter and map methods were called appropriately
+                    mock_filter.assert_called_once_with(lambdax=mock.ANY)
+                    mock_map.assert_called_once_with(lambda row: row[0])
+
+                    # Add additional assertions based on the behavior of remove_line_pyS
+                    # For example, you can check the result or other conditions
+
+    # Add more test cases as needed
+
+if __name__ == '__main__':
+    unittest.main()
 
 import unittest
 from unittest.mock import patch, MagicMock
