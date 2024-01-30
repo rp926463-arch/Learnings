@@ -1,3 +1,57 @@
+
+import unittest
+from unittest.mock import patch, MagicMock
+from your_module import YourClass  # Replace 'your_module' with your actual module name
+
+class TestYourClass(unittest.TestCase):
+    @patch('your_module.SparkContext')
+    @patch('your_module.YourClass.remove_line_pyS')
+    @patch('your_module.pyspark.sql.SparkSession.builder.getOrCreate')
+    def test_readTxtFile(self, mock_get_or_create, mock_remove_line_pyS, mock_SparkContext):
+        # Mock SparkContext
+        mock_spark_context = MagicMock()
+        mock_SparkContext.return_value = mock_spark_context
+
+        # Mock SparkSession
+        mock_spark_session = MagicMock()
+        mock_get_or_create.return_value = mock_spark_session
+
+        # Mock remove_line_pyS method
+        mock_remove_line_pyS.side_effect = lambda rdd, s, st, n: rdd
+
+        # Create an instance of YourClass with the mock SparkSession
+        your_instance = YourClass(spark=None)
+
+        # Call the method you want to test
+        filepath = "path/to/your/file.txt"
+        delimiter = ","
+        header_cnt = 2
+        footer_cnt = 1
+        header_str = ["col1", "col2", "col3"]
+
+        with patch.object(mock_spark_context, 'textFile') as mock_text_file:
+            mock_text_file.return_value = ["line1", "line2", "line3"]  # Mocked textFile result
+
+            result_df = your_instance.readTxtFile(filepath, delimiter, header_cnt, footer_cnt, header_str)
+
+            # Assert that textFile method was called with the correct argument
+            mock_text_file.assert_called_once_with(filepath)
+
+            # Assert that remove_line_pyS was called twice
+            mock_remove_line_pyS.assert_has_calls([
+                unittest.mock.call(["line1", "line2", "line3"], 'HEAD', "", header_cnt),
+                unittest.mock.call(["line1", "line2", "line3"], 'TAIL', "", footer_cnt)
+            ])
+
+            # Additional assertions on the result_df if needed
+            # For example, you can check the schema, count, etc.
+            self.assertEqual(result_df.count(), 3)
+            self.assertEqual(result_df.columns, ["col1", "col2", "col3"])
+
+if __name__ == '__main__':
+    unittest.main()
+
+
 import unittest
 from unittest.mock import patch, MagicMock
 from pyspark.sql import SparkSession
