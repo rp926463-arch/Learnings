@@ -1,3 +1,41 @@
+from concurrent.futures import ThreadPoolExecutor
+from dataloader_process.dataloader import DataLoader
+
+class Test(DataLoader):
+    def __init__(self):
+        super().__init__('rbg')
+        self.config = {
+            'product1': [
+                {"appname": "p1app1", "query": "select 1"},
+                {"appname": "p1app2", "query": "select 2"},
+                {"appname": "p1app3", "query": "select 3"}
+            ],
+            'product2': [
+                {"appname": "p2app1", "query": "select 1"},
+                {"appname": "p2app2", "query": "select 2"},
+                {"appname": "p2app3", "query": "select 3"}
+            ]
+        }
+
+    def run_queries_for_product(self, product_name, entries):
+        for entry in entries:
+            spark = self.get_spark_connection(entry["appname"])
+            result = spark.sql(entry["query"]).collect()
+            print(f"Result for {entry['appname']} in {product_name}: {result}")
+
+    def run(self):
+        with ThreadPoolExecutor() as executor:
+            for product_name, entries in self.config.items():
+                executor.submit(self.run_queries_for_product, product_name, entries)
+
+if __name__ == "__main__":
+    test_instance = Test()
+    test_instance.run()
+
+
+
+
+
 import unittest
 from unittest.mock import patch, MagicMock
 from your_module import YourClass  # Replace 'your_module' with your actual module name
