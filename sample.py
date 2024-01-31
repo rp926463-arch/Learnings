@@ -1,4 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
+from threading import current_thread
+from time import time
 from dataloader_process.dataloader import DataLoader
 
 class Test(DataLoader):
@@ -19,18 +21,27 @@ class Test(DataLoader):
 
     def run_queries_for_product(self, product_name, entries):
         for entry in entries:
+            start_time = time()  # Record the start time
             spark = self.get_spark_connection(entry["appname"])
-            result = spark.sql(entry["query"]).collect()
-            print(f"Result for {entry['appname']} in {product_name}: {result}")
+            try:
+                result = spark.sql(entry["query"]).collect()
+                elapsed_time = time() - start_time  # Calculate total time taken
+                print(f"Result for {entry['appname']} in {product_name} (Thread ID: {current_thread().ident}, Start Time: {start_time}, Elapsed Time: {elapsed_time}): {result}")
+            finally:
+                # Cleanup: Stop the Spark session
+                spark.stop()
+                print(f"Spark session for {entry['appname']} in {product_name} (Thread ID: {current_thread().ident}) stopped.")
 
     def run(self):
-        with ThreadPoolExecutor() as executor:
+        max_workers = 10  # Specify the maximum number of workers/threads
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             for product_name, entries in self.config.items():
                 executor.submit(self.run_queries_for_product, product_name, entries)
 
 if __name__ == "__main__":
     test_instance = Test()
     test_instance.run()
+
 
 
 
