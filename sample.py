@@ -1,3 +1,15 @@
+    root_logger = logging.getLogger()
+
+    # Add a new StreamHandler with the desired format
+    new_handler = logging.StreamHandler()
+    new_handler.setLevel(logging.INFO)
+    new_handler.setFormatter(logging.Formatter('app="app2" module="%(module)s"'))
+    root_logger.addHandler(new_handler)
+
+# Create a logger for app2.py
+logger = logging.getLogger(__name__)
+
+
 with patch.object(mock_df, "agg", return_value=MagicMock()) as mock_agg:
             mock_agg.return_value.collect.return_value = expected_agg_result
             
