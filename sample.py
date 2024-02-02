@@ -1,3 +1,21 @@
+import logging
+import logging.config
+from app.app1 import *
+
+# Check if logging is already configured before configuring it again
+if not logging.getLogger().handlers:
+    # If app1.py has configured logging, get the existing root logger's configuration
+    logging_conf = logging.getLogger().getEffectiveLevel()
+    logging.basicConfig(level=logging_conf, format='app="app2" module="%(module)s"')
+
+logger = logging.getLogger(__name__)
+
+def test():
+    logger.info("Hello")
+
+# Add additional logging configuration if needed
+
+
 from concurrent.futures import ThreadPoolExecutor
 from threading import current_thread
 from time import time
