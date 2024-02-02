@@ -1,3 +1,5 @@
+max_value = your_dataframe.agg(max('your_column').alias('max_value')).first()['max_value']
+
 import logging
 import logging.config
 from app.app1 import *
