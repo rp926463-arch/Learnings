@@ -1,3 +1,19 @@
+def calculate_stats(self, count_column, max_column):
+        # Calculate count and max for specified columns
+        count_result = self.df.agg(count(count_column).alias("count")).collect()[0]["count"]
+        max_result = self.df.agg(max(max_column).alias("max_value")).collect()[0]["max_value"]
+        return count_result, max_result
+
+def generate_payload(self, count_column, max_column):
+    # Generate a payload dictionary with statistics
+    count_result, max_result = self.calculate_stats(count_column, max_column)
+    payload = {
+        "count_column": count_result,
+        "max_column": max_result
+    }
+    return payload
+
+
 column_name = 'your_column'
 max_value = your_dataframe.agg(max(column_name).alias('max_value')).first()['max_value']
 
