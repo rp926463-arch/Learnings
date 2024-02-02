@@ -1,4 +1,7 @@
-
+with patch.object(mock_df, "agg", return_value=MagicMock()) as mock_agg:
+            mock_agg.return_value.collect.return_value = expected_agg_result
+            
+            
 import unittest
 from unittest.mock import MagicMock
 from dataframe_operations import get_df_count, get_max_date
