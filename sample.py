@@ -1,3 +1,36 @@
+
+import unittest
+from unittest.mock import MagicMock
+from dataframe_operations import get_df_count, get_max_date
+
+class TestDataframeOperations(unittest.TestCase):
+    def test_get_df_count(self):
+        # Create a mock DataFrame
+        mock_df = MagicMock()
+        mock_df.count.return_value = 42
+
+        # Call the function
+        result_count = get_df_count(mock_df)
+
+        # Assert the result
+        self.assertEqual(result_count, 42)
+
+    def test_get_max_date(self):
+        # Create a mock DataFrame
+        mock_df = MagicMock()
+        mock_df.agg.return_value.collect.return_value = [{"max_value": "2022-03-01"}]
+
+        # Call the function
+        result_max_date = get_max_date(mock_df, "date_column")
+
+        # Assert the result
+        self.assertEqual(result_max_date, "2022-03-01")
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+
 def calculate_stats(self, count_column, max_column):
         # Calculate count and max for specified columns
         count_result = self.df.agg(count(count_column).alias("count")).collect()[0]["count"]
