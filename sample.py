@@ -1,3 +1,55 @@
+import json
+from concurrent.futures import ThreadPoolExecutor
+
+def process_app(product_name, app_config):
+    for app_info in app_config:
+        app_name = app_info['app_name']
+        load_type = app_info['load_type']
+        # Call Spark job for the current app
+        print(f"Processing {app_name} for {product_name} (Load type: {load_type})")
+
+def process_products(config):
+    with ThreadPoolExecutor() as executor:
+        for product_name, app_config in config.items():
+            executor.submit(process_app, product_name, app_config)
+
+if __name__ == "__main__":
+    # Your JSON configuration
+    json_config = '''
+    {
+      "product1": [
+        {
+          "app_name": "product1_app1",
+          "load_type": "DL"
+        },
+        {
+          "app_name": "product1_app2",
+          "load_type": "DL"
+        }
+      ],
+      "product2": [
+        {
+          "app_name": "product2_app1",
+          "load_type": "DL"
+        },
+        {
+          "app_name": "product2_app2",
+          "load_type": "DL"
+        }
+      ]
+    }
+    '''
+    # Parse JSON
+    config = json.loads(json_config)
+
+    # Process products using ThreadPoolExecutor
+    process_products(config)
+
+    # Continue with other operations without waiting for tasks to complete
+    print("Continuing with other operations...")
+
+
+
     root_logger = logging.getLogger()
 
     # Add a new StreamHandler with the desired format
