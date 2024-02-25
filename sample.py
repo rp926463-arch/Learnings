@@ -1,8 +1,59 @@
+import configparser
+
+
+class Test:
+    def __init__(self, job_id, job_date):
+        self.job_id = job_id
+        self.job_date = job_date
+
+class Test:
+    def __init__(self):
+        self.Env = os.environ['Env']
+        self.connect_configurator = configparser.ConfigParser()
+        filename = '/tmp/config.ini'
+        self.connect_configurator.read(filename)
+        
+        abc = pkey.tarnsform('')
+        
+        self.target_options = {
+            'sfUrl': self.connect_configurator[self.Env.upper()]['SF_URL'],
+            'sfUser': self.connect_configurator[self.Env.upper()]['SF_USER'],
+            'sfDatabase': self.connect_configurator[self.Env.upper()]['SF_DB'],
+            'op1': abc,
+            'op2': self.connect_configurator[self.Env.upper()]['op2'],
+            'op3': self.connect_configurator[self.Env.upper()]['op3'],
+            'op4': self.connect_configurator[self.Env.upper()]['op4'],
+            'op5': self.connect_configurator[self.Env.upper()]['op5'],
+            'op6': self.connect_configurator[self.Env.upper()]['op6'],
+            'op7': self.connect_configurator[self.Env.upper()]['op7'],
+            'op8': self.connect_configurator[self.Env.upper()]['op8'],
+            'op9': self.connect_configurator[self.Env.upper()]['op9']
+        }
+        
+        self.source_options = {
+            'op1': self.connect_configurator[self.Env.upper()]['op1'],
+            'op2': self.connect_configurator[self.Env.upper()]['op2'],
+            'op3': self.connect_configurator[self.Env.upper()]['op3'],
+            'op4': self.connect_configurator[self.Env.upper()]['op4']
+        }
+        
+class Payload:
+    def __init__(self) 
+        
+        
+
+content of config.ini
+[DEV]
+URL=http://ajsdhajshd
+
+
+
 import json
 from concurrent.futures import ThreadPoolExecutor
 
 def process_app(product_name, app_config):
     for app_info in app_config:
+        print(f"Starting thread for {app_config[0]['app_name']}")
         app_name = app_info['app_name']
         load_type = app_info['load_type']
         # Call Spark job for the current app
@@ -44,6 +95,23 @@ if __name__ == "__main__":
 
     # Process products using ThreadPoolExecutor
     process_products(config)
+    
+    
+Actual Output:
+Starting thread for  product1_app1
+Starting thread for  product1_app1
+Starting thread for  product2_app1
+Starting thread for  product2_app1
+
+Expected output
+Starting thread for  product1_app1
+Starting thread for  product1_app2
+Starting thread for  product2_app1
+Starting thread for  product2_app2
+
+
+
+ 
 
     # Continue with other operations without waiting for tasks to complete
     print("Continuing with other operations...")

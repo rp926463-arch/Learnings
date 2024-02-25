@@ -1,0 +1,15 @@
+https://docs.snowflake.com/en/user-guide/spark-connector-use#label-spark-options
+truncate_table
+usestagingtable
+
+https://community.databricks.com/t5/data-engineering/optimizing-writes-from-databricks-to-snowflake/m-p/7988#M3721
+
+
+
+Snowflake JDBC:
+https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc/
+https://docs.snowflake.com/en/release-notes/clients-drivers/spark-connector-2023
+
+Spark snowflake connector
+https://docs.snowflake.com/en/user-guide/spark-connector-install
+https://central.sonatype.com/search?q=g%3Anet.snowflake%20a%3Aspark-snowflake_2.12
