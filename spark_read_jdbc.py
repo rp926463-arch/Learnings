@@ -62,3 +62,19 @@ sfOptions_write= {
 
 SNOWFLAKE_SOURCE_NAME = "net.snowflake.spark.snowflake"
 jdbcDF.write.format(SNOWFLAKE_SOURCE_NAME).options(**sfOptions_write).option("dbTable", "test_table_new").mode("append").save()
+
+
+
+'''
+select count(1), id from testdb.testschema.test_table group by id;
+COUNT(1)    ID
+28311552    1
+28311552    3
+110592      111
+28311552    2
+
+while reading data from table jdbc connector used partitionColumn='ID', lowerBound='1', upperBound='2', numPartitions='4' to create predicates as below
+SELECT "ID","FIRST_NAME","LAST_NAME" FROM test_table WHERE "ID" < 2 or "ID" is null 
+SELECT "ID","FIRST_NAME","LAST_NAME" FROM test_table WHERE "ID" >= 2 AND "ID" < 3 
+SELECT "ID","FIRST_NAME","LAST_NAME" FROM test_table WHERE "ID" >= 3 
+'''
