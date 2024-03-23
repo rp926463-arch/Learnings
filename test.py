@@ -2,6 +2,41 @@
 
 #print(dictionary.items())
 
+final_table = "testschema.FINAL_STORES"
+stage_table = "STAGING.STAGING_STORES"
+non_key_columns = ['LOCATION', 'VALUE']
+key_column = ['STORE_ID']
+scd_columns = ['ACTIVE_FLAG', 'END_DATE', 'START_DATE']
+
+# Define the merge condition
+merge_condition = " AND ".join([f"target.{col} = source.{col}" for col in key_column])
+merge_condition += f" AND target.ACTIVE_FLAG = 'Y' AND source.ACTIVE_FLAG = 'N'"
+
+# Define the update statement
+update_statement = ", ".join([f"target.{col} = source.{col}" for col in non_key_columns])
+
+# Define the insert columns and values
+insert_columns = ", ".join([f"source.{col}" for col in scd_columns + key_column + non_key_columns])
+insert_values = ", ".join([f"source.{col}" for col in scd_columns + key_column + non_key_columns])
+
+# Construct the merge statement
+merge_statement = f"""
+MERGE INTO {final_table} AS target
+USING {stage_table} AS source
+ON {merge_condition}
+WHEN MATCHED THEN
+    UPDATE SET
+        {update_statement}
+WHEN NOT MATCHED THEN
+    INSERT ({", ".join(scd_columns + key_column + non_key_columns)})
+    VALUES ({insert_values});
+"""
+
+print(merge_statement)
+
+
+
+
 def find_unique_values1(dictionary):
     lst = []
     
@@ -230,13 +265,13 @@ config_data = {
 obj = SnowflakePythonConfig(config_data)
 
 # Using the SnowflakePythonConfig object to get options for spark.read
-options = obj.get_spark_options()
+#options = obj.get_spark_options()
 
 # Using options for spark.read
-print(options)
+#print(options)
 
-print(obj.cert_scv_namespace)
-print(obj.cert_scv_key)
+#print(obj.cert_scv_namespace)
+#print(obj.cert_scv_key)
 
 
 
